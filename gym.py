@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import form
+import os
 
 df = pd.read_csv('exerciseKingMaster/gym_members_exercise_tracking.csv')
 
@@ -39,4 +41,18 @@ def recommend_workout(age, gender, weight, height):
         print(f"추천된 운동: {workout_map[workout_recommendation]}")
     return workout_recommendation
 
-recommend_workout(30, 2, 60, 1.65)
+
+bodyInfoQuestions = [
+    form.Question("성별", "안녕하세요. 당신의 성별을 알려주세요.", ["남성", "여성"] ),
+    form.Question("나이 ", "나이를 입력해주세요.", [] ),
+    form.Question("키", "키(cm)를 알려주세요.", [] ),
+    form.Question("몸무게", "몸무게(kg)를 알려주세요.", [] ),
+    form.Question("이름", "이름이 무엇인가요?", [] ),]
+
+bodyInfoForm = form.Form("정보 조사", bodyInfoQuestions)
+bodyInfoForm.StartQuestion()
+
+
+os.system("clear")
+recommend_workout(int(bodyInfoForm.GetAnswerData(1)), int(bodyInfoForm.GetAnswerData(0)), int(bodyInfoForm.GetAnswerData(3)), int(bodyInfoForm.GetAnswerData(2)))
+

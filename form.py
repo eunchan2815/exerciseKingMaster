@@ -75,26 +75,9 @@ class Form:
 
 
     def GetAnswerData(self, questionId):
-        for i in self.questionList:
-            if (i.previewQuestion == questionId):
-                return i.answer
+        return self.questionList[questionId].answer
 
             
 
 
 
-bodyInfoQuestions = [
-    Question("성별", "안녕하세요. 당신의 성별을 알려주세요.", ["남성", "여성"] ),
-    Question("나이 ", "나이를 입력해주세요.", [] ),
-    Question("키", "키(cm)를 알려주세요.", [] ),
-    Question("몸무게", "몸무게(kg)를 알려주세요.", [] ),
-    Question("이름", "이름이 무엇인가요?", [] ),]
-
-bodyInfoForm = Form("정보 조사", bodyInfoQuestions)
-
-
-
-
-
-bodyInfoForm.StartQuestion()
-print(bodyInfoForm.GetAnswerData("성별"))
