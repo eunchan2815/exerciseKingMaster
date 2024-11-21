@@ -34,7 +34,8 @@ def showExercise3D(data, type):
 
 
 def showPairPlot(dataframe):
-    sns.pairplot(dataframe, diag_kind='kde', markers='o')
+    sns.pairplot(dataframe, diag_kind='kde', markers='o', plot_kws={'alpha' : 0.05})
+    plt.show()
 
 
 

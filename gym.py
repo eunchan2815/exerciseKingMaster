@@ -33,7 +33,7 @@ def recommend_workout(age, gender, weight, height):
     workout_map = {1: "Yoga", 2: "HIIT", 3: "Cardio", 4: "Strength"}
     print(f"추천된 운동: {workout_map[recommand]}")
     graph.showExercise3D(df[df["Workout_Type"] == recommand], workout_map[recommand])
-    graph.showPairPlot(pd.DataFrame(df))
+    graph.showPairPlot(pd.DataFrame(df[["Age", "Gender", "Weight (kg)", "Height (m)", "Workout_Type"]]))
 
 bodyInfoQuestions = [
     form.Question("성별", "안녕하세요. 당신의 성별을 알려주세요.", ["남성", "여성"] ),
