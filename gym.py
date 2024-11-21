@@ -31,9 +31,9 @@ def recommend_workout(age, gender, weight, height):
     similar_user = df[(np.abs(df["Weight (kg)"] - predicted_weight) < 5) & 
                       (np.abs(df["Height (m)"] - predicted_height) < 5)]
     
-    isDataSuccess = True;
+    isDataSuccess = True
     if (age < min(df["Age"]) or age > max(df["Age"])):
-        isDataSuccess = False;
+        isDataSuccess = False
 
     if similar_user.empty:
         print("비슷한 사용자가 없으므로 기본 운동을 추천합니다.")
