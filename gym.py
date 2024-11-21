@@ -1,71 +1,38 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
 import numpy as np
 import form
 import os
 import graph
 
+# 데이터 로드
 df = pd.read_csv('exerciseKingMaster/gym_members_exercise_tracking.csv')
 
-
+# 데이터 전처리
 df["Gender"] = df["Gender"].replace({"Male": 1, "Female": 2}).astype(int)
 df["Workout_Type"] = df["Workout_Type"].replace({"Yoga": 1, "HIIT": 2, "Cardio": 3, "Strength": 4}).astype(int)
 
-
-# 나이, 성별에 따른 몸무게 및 키를 구하는 모델
-X = df[["Age", "Gender"]]
-Y = df[["Weight (kg)", "Height (m)"]]
-
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.05, random_state=2)
-bodyLr = LinearRegression()
-bodyLr.fit(X_train, Y_train)
-
-
-
 # 나이, 성별, 몸무게, 키에 따라 운동 종목을 추천하는 모델
 X2 = df[["Age", "Gender", "Weight (kg)", "Height (m)"]]
-Y2 = df["Workout_Type"]
+Y2 = df["Workout_Type"].values  # 1차원 배열로 변환
 
 X2_train, X2_test, Y2_train, Y2_test = train_test_split(X2, Y2, test_size=0.05, random_state=2)
-exLr = LinearRegression()
+exLr = LogisticRegression(max_iter=1000)
 exLr.fit(X2_train, Y2_train)
 
-
-
-
-
-
 def recommend_workout(age, gender, weight, height):
-    input_data = pd.DataFrame([[age, gender, weight, height]], columns=["Age", "Gender"])
-    predicted_values = bodyLr.predict(input_data)
+    if age < min(df["Age"]) or age > max(df["Age"]):
+        raise ValueError("입력된 나이가 데이터 범위를 벗어났습니다.")
+    if weight < min(df["Weight (kg)"]) or weight > max(df["Weight (kg)"]):
+        raise ValueError("입력된 몸무게가 데이터 범위를 벗어났습니다.")
+    if height < min(df["Height (m)"]) or height > max(df["Height (m)"]):
+        raise ValueError("입력된 키가 데이터 범위를 벗어났습니다.")
     
-    predicted_weight, predicted_height = predicted_values[0]
-    
-    similar_user = df[(np.abs(df["Weight (kg)"] - weight) < 5) & 
-                      (np.abs(df["Height (m)"] - height) < 5)]
-    
-    # 이상한 값이 들어왔을 때 빠꾸할려고 준비
-    isDataSuccess = True
-    if (age < min(df["Age"]) or age > max(df["Age"])):
-        isDataSuccess = False
-
-    # 비슷한 유저가 없을 때 빠꾸
-    if similar_user.empty:
-        print("비슷한 사용자가 없으므로 기본 운동을 추천합니다.")
-        workout_recommendation = "Yoga"
-
-    elif (not isDataSuccess): # 빠구 실현
-        print("닌 운동하지 마세요")
-
-    else: # 정상적 작동(키, 몸무게 예측 완료, 운동 추천 완료)
-        recommand = exLr.predict(age, height, weight, height)
-        print(f"평균 체중: {predicted_weight:.2f} kg, 평균 키: {predicted_height:.2f} m")
-        workout_map = {1: "Yoga", 2: "HIIT", 3: "Cardio", 4: "Strength"}
-        print(f"추천된 운동: {workout_map[recommand]}")
-        graph.showExercise3D(df[df["Workout_Type"] == recommand], workout_map[recommand])
-    return recommand
-
+    recommand = exLr.predict([[age, gender, weight, height]])[0]
+    workout_map = {1: "Yoga", 2: "HIIT", 3: "Cardio", 4: "Strength"}
+    print(f"추천된 운동: {workout_map[recommand]}")
+    graph.showExercise3D(df[df["Workout_Type"] == recommand], workout_map[recommand])
 
 bodyInfoQuestions = [
     form.Question("성별", "안녕하세요. 당신의 성별을 알려주세요.", ["남성", "여성"] ),
@@ -73,11 +40,14 @@ bodyInfoQuestions = [
     form.Question("키", "키(cm)를 알려주세요.", [] ),
     form.Question("몸무게", "몸무게(kg)를 알려주세요.", [] ),
     form.Question("이름", "이름이 무엇인가요?", [] ),]
-
 bodyInfoForm = form.Form("정보 조사", bodyInfoQuestions)
 bodyInfoForm.StartQuestion()
 
-
+# 결과 출력
 os.system("clear")
-recommend_workout(int(bodyInfoForm.GetAnswerData(1)), int(bodyInfoForm.GetAnswerData(0)), int(bodyInfoForm.GetAnswerData(3)), int(bodyInfoForm.GetAnswerData(2)))
-
+recommend_workout(
+    int(bodyInfoForm.GetAnswerData(1)),
+    int(bodyInfoForm.GetAnswerData(0)),
+    int(bodyInfoForm.GetAnswerData(3)),
+    float(bodyInfoForm.GetAnswerData(2))
+)
