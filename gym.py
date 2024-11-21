@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
 import form
 import os
@@ -17,7 +18,7 @@ X2 = df[["Age", "Gender", "Weight (kg)", "Height (m)"]]
 Y2 = df["Workout_Type"].values
 # 1차원 배열로 변환
 
-X2_train, X2_test, Y2_train, Y2_test = train_test_split(X2, Y2, test_size=0.05, random_state=2)
+X2_train, X2_test, Y2_train, Y2_test = train_test_split(X2, Y2, test_size=0.1, random_state=2)
 exLr = LogisticRegression(max_iter=1000)
 exLr.fit(X2_train, Y2_train)
 
@@ -52,3 +53,6 @@ recommend_workout(
     int(bodyInfoForm.GetAnswerData(3)),
     float(bodyInfoForm.GetAnswerData(2))
 )
+
+confusion_matrix(Y2_test, exLr.predict(X2_test))
+classification_report(Y2_test, exLr.predict(X2_test))
