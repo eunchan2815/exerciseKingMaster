@@ -13,41 +13,58 @@ df["Gender"] = df["Gender"].replace({"Male": 1, "Female": 2}).astype(int)
 df["Workout_Type"] = df["Workout_Type"].replace({"Yoga": 1, "HIIT": 2, "Cardio": 3, "Strength": 4}).astype(int)
 
 
-
+# 나이, 성별에 따른 몸무게 및 키를 구하는 모델
 X = df[["Age", "Gender"]]
 Y = df[["Weight (kg)", "Height (m)"]]
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=2)
-lr = LinearRegression()
-lr.fit(X_train, Y_train)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.05, random_state=2)
+bodyLr = LinearRegression()
+bodyLr.fit(X_train, Y_train)
+
+
+
+# 나이, 성별, 몸무게, 키에 따라 운동 종목을 추천하는 모델
+X2 = df[["Age", "Gender", "Weight (kg)", "Height (m)"]]
+Y2 = df["Workout_Type"]
+
+X2_train, X2_test, Y2_train, Y2_test = train_test_split(X2, Y2, test_size=0.05, random_state=2)
+exLr = LinearRegression()
+exLr.fit(X2_train, Y2_train)
+
+
+
+
 
 
 def recommend_workout(age, gender, weight, height):
-    input_data = pd.DataFrame([[age, gender]], columns=["Age", "Gender"])
-    predicted_values = lr.predict(input_data)
+    input_data = pd.DataFrame([[age, gender, weight, height]], columns=["Age", "Gender"])
+    predicted_values = bodyLr.predict(input_data)
     
     predicted_weight, predicted_height = predicted_values[0]
     
-    similar_user = df[(np.abs(df["Weight (kg)"] - predicted_weight) < 5) & 
-                      (np.abs(df["Height (m)"] - predicted_height) < 5)]
+    similar_user = df[(np.abs(df["Weight (kg)"] - weight) < 5) & 
+                      (np.abs(df["Height (m)"] - height) < 5)]
     
+    # 이상한 값이 들어왔을 때 빠꾸할려고 준비
     isDataSuccess = True
     if (age < min(df["Age"]) or age > max(df["Age"])):
         isDataSuccess = False
 
+    # 비슷한 유저가 없을 때 빠꾸
     if similar_user.empty:
         print("비슷한 사용자가 없으므로 기본 운동을 추천합니다.")
         workout_recommendation = "Yoga"
-    elif (not isDataSuccess):
+
+    elif (not isDataSuccess): # 빠구 실현
         print("닌 운동하지 마세요")
-    else:
-        workout_type_counts = similar_user["Workout_Type"].value_counts()
-        workout_recommendation = workout_type_counts.idxmax()
+
+    else: # 정상적 작동(키, 몸무게 예측 완료, 운동 추천 완료)
+        recommand = exLr.predict(age, height, weight, height)
         print(f"평균 체중: {predicted_weight:.2f} kg, 평균 키: {predicted_height:.2f} m")
         workout_map = {1: "Yoga", 2: "HIIT", 3: "Cardio", 4: "Strength"}
-        print(f"추천된 운동: {workout_map[workout_recommendation]}")
-        graph.showExercise3D(df[df["Workout_Type"] == int(workout_recommendation)], workout_map[workout_recommendation])
-    return workout_recommendation
+        print(f"추천된 운동: {workout_map[recommand]}")
+        graph.showExercise3D(df[df["Workout_Type"] == recommand], workout_map[recommand])
+    return recommand
 
 
 bodyInfoQuestions = [
