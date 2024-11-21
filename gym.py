@@ -6,7 +6,6 @@ import form
 import os
 import graph
 
-# 데이터 로드
 df = pd.read_csv('exerciseKingMaster/gym_members_exercise_tracking.csv')
 
 # 데이터 전처리
@@ -15,7 +14,8 @@ df["Workout_Type"] = df["Workout_Type"].replace({"Yoga": 1, "HIIT": 2, "Cardio":
 
 # 나이, 성별, 몸무게, 키에 따라 운동 종목을 추천하는 모델
 X2 = df[["Age", "Gender", "Weight (kg)", "Height (m)"]]
-Y2 = df["Workout_Type"].values  # 1차원 배열로 변환
+Y2 = df["Workout_Type"].values
+# 1차원 배열로 변환
 
 X2_train, X2_test, Y2_train, Y2_test = train_test_split(X2, Y2, test_size=0.05, random_state=2)
 exLr = LogisticRegression(max_iter=1000)
