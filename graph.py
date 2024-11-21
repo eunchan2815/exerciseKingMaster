@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.colors as mcl
 import pandas as pd
+import seaborn as sns
 import numpy as np
 
 def showExercise3D(data, type):
@@ -30,6 +31,11 @@ def showExercise3D(data, type):
     ax.set_zlabel('Height (m)')
     plt.title(type + " exercisers data scatter plot")
     plt.show()
+
+
+def showPairPlot(dataframe):
+    sns.pairplot(dataframe, diag_kind='kde', markers='o')
+
 
 
 df = pd.read_csv('exerciseKingMaster/gym_members_exercise_tracking.csv')
