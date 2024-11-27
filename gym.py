@@ -56,3 +56,4 @@ recommend_workout(
 
 print(confusion_matrix(Y2_test, exLr.predict(X2_test)))
 print(classification_report(Y2_test, exLr.predict(X2_test)))
+print("진예준은 신이다")
