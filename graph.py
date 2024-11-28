@@ -5,7 +5,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 
-def showExercise3D(data, type):
+def showExercise3D(data, type, mainData):
 
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111, projection='3d')
@@ -21,8 +21,8 @@ def showExercise3D(data, type):
 
     # 축 설정
     sc = ax.scatter(
-        data['Age'], data['Weight (kg)'], data['Height (m)'], 
-        c=data['Workout_Type'], cmap=cmap
+        mainData['Age'], mainData['Weight (kg)'], mainData['Height (m)'], 
+        c=mainData['Workout_Type'], cmap=cmap
     )
 
 
