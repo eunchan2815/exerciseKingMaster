@@ -12,6 +12,8 @@ def showExercise3D(data, type):
 
     colors = [
         (0,0,1), ## 컬러바 가장 옅은쪽
+        (0,1,0),
+        (1,1,0),
         (1,0,0) ## 컬러바 가장 진한쪽
     ]
     cmap = mcl.LinearSegmentedColormap.from_list('my_cmap', colors, gamma=2)
@@ -20,12 +22,12 @@ def showExercise3D(data, type):
     # 축 설정
     sc = ax.scatter(
         data['Age'], data['Weight (kg)'], data['Height (m)'], 
-        c=data['Gender'], cmap=cmap
+        c=data['Workout_Type'], cmap=cmap
     )
 
 
     # 컬러바 추가
-    plt.colorbar(sc, label='Gender')
+    plt.colorbar(sc, label='Workout Type')
     ax.set_xlabel('Age')
     ax.set_ylabel('Weight (kg)')
     ax.set_zlabel('Height (m)')
