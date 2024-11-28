@@ -54,5 +54,5 @@ recommend_workout(
     float(bodyInfoForm.GetAnswerData(2))
 )
 
-confusion_matrix(Y2_test, exLr.predict(X2_test))
-classification_report(Y2_test, exLr.predict(X2_test))
+print(confusion_matrix(Y2_test, exLr.predict(X2_test)))
+print(classification_report(Y2_test, exLr.predict(X2_test)))
